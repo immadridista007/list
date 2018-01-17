@@ -39,6 +39,7 @@ class TasksController extends Controller
 
     public function show(int $id) {
         $task = Task::find($id);
+        if ($task->user->id != Auth::user()->id) return redirect ('/tasks')->with('error' , 'Not allowed to see others tasks');
         //return dd ($task);
         return view('tasks.show')->with('task' , $task);
     }
