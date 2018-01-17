@@ -39,6 +39,7 @@ class TasksController extends Controller
 
     public function show(int $id) {
         $task = Task::find($id);
+        if (!$task) return redirect ('/tasks')->with('error' , 'task not found');
         if ($task->user->id != Auth::user()->id) return redirect ('/tasks')->with('error' , 'Not allowed to see others tasks');
         //return dd ($task);
         return view('tasks.show')->with('task' , $task);
@@ -73,6 +74,8 @@ class TasksController extends Controller
 
     public function edit (int $id) {
         $task = Task::find($id);
+        if (!$task) return redirect ('/tasks')->with('error' , 'task not found');
+        if ($task->user->id != Auth::user()->id) return redirect ('/tasks')->with('error' , 'Not allowed to edit others tasks');
         return view ('tasks.edit')->with('task' , $task);
     }
 
@@ -86,6 +89,8 @@ class TasksController extends Controller
             'description' => 'required',
         ]);
         $task = Task::find($id);
+        if (!$task) return redirect ('/tasks')->with('error' , 'task not found');
+        if ($task->user->id != Auth::user()->id) return redirect ('/tasks')->with('error' , 'Not allowed to update others tasks');
         $task->title = $request->input('title');
         $task->description = $request->input('description');
         $task->save();
@@ -100,6 +105,7 @@ class TasksController extends Controller
 
     public function delete (int $id) {
         $task = Task::find($id);
+        if (!$task) return redirect ('/tasks')->with('error' , 'task not found');
         if (Auth::user()->id != $task->user->id) {
             return redirect ('/tasks')->with('error' , 'Not Allowed to delete others tasks');
         }
